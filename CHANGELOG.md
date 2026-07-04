@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.5.0 — 2026-07-04
+
+Formal verification. Property wrappers in `formal/` prove protocol and
+safety contracts by temporal induction (yosys + z3), unbounded, not
+merely to a finite depth:
+
+- `fix_add` (saturation is wrap-free), `arbiter_rr` (one-hot subset),
+  `priority_encoder` (one-hot lowest bit), `fifo_sync` (count/flag
+  invariants), `skid_buffer` (valid/ready handshake safety)
+- `make formal`; CI runs it every push.
+
 ## v0.4.0 — 2026-07-04
 
 - `lfpga_i2c_master`: single-master 7-bit I2C controller. Byte-level

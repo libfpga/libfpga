@@ -10,12 +10,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install open-source FPGA toolchain
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq iverilog verilator yosys python3
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq iverilog verilator yosys z3 python3
       - name: Lint (Verilator -Wall)
         run: make lint
       - name: Simulate (self-checking testbenches, Icarus)
         run: make test
       - name: Synthesis smoke + resource stats (Yosys)
         run: make synth
+      - name: Formal verification (induction, z3)
+        run: make formal
       - name: Generator (regenerate + verify the MLP example)
         run: make gen

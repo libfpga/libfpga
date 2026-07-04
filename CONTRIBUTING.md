@@ -25,4 +25,9 @@ Style:
 - Handshakes are valid/ready with AXI-Stream semantics: `valid` must not
   wait for `ready`; payload stable while `valid && !ready`.
 
-Run `make` before pushing — it is exactly what CI runs.
+Protocol and safety-critical modules should also carry a formal property
+wrapper in `formal/` (proven by induction, `make formal`). See the
+existing wrappers for the pattern.
+
+Run `make` (and `make formal` if you touched a verified module) before
+pushing — it is exactly what CI runs.

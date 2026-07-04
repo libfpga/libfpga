@@ -117,6 +117,29 @@ make test     # just the testbenches
 Requires `iverilog`, `verilator`, `yosys` — all packaged on most distros,
 or grab the [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 
+### Formal verification
+
+Testbenches prove the design works on the vectors you tried. **Formal**
+proves properties hold for *every* input, for all time. The wrappers in
+`formal/` state protocol and safety contracts and prove them by temporal
+induction (yosys + z3):
+
+```sh
+make formal
+```
+
+Proven unbounded today:
+
+| Module | Property proven |
+|---|---|
+| `lfpga_fix_add` | saturating add never wraps sign; exact when no overflow |
+| `lfpga_arbiter_rr` | grant is always a one-hot subset of `req` |
+| `lfpga_priority_encoder` | grant is the one-hot lowest set bit |
+| `lfpga_fifo_sync` | `count ≤ DEPTH`; flags track count; never full ∧ empty |
+| `lfpga_skid_buffer` | `valid` never drops before a transfer; payload stable |
+
+CI runs these on every push.
+
 ## Roadmap
 
 - **v0.1 — shipped.** Everything above.
@@ -124,8 +147,9 @@ or grab the [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 - **v0.3 — shipped.** The fixed-point + neural tier above, plus the MLP
   generator.
 - **v0.4 — shipped.** I2C master (above).
-- **v0.5** — formal properties (SymbiYosys) for the protocol modules,
-  FuseSoC packaging, board demo projects
+- **v0.5 — shipped.** Formal verification (see above).
+- **v0.6** — FuseSoC packaging, board demo projects, more formal
+  coverage.
 
 ## The MLP generator
 
