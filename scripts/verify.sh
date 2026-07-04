@@ -25,7 +25,7 @@ sim() {
 
 lint() {
     for rtl in rtl/*/*.v; do
-        if verilator --lint-only --quiet-stats -Wall -Wno-DECLFILENAME "$rtl" 2> "build/lint.log"; then
+        if verilator --lint-only -Wall -Wno-DECLFILENAME "$rtl" > "build/lint.log" 2>&1; then
             echo "LINT PASS: $(basename "$rtl")"
         else
             echo "LINT FAIL: $(basename "$rtl")"; cat build/lint.log; fails=$((fails+1))
