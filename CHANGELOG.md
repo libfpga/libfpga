@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.2.0 — 2026-07-04
+
+The utilities tier — 7 new modules (catalog inspired by the excellent,
+unrelated Wren6991/libfpga; implementations our own):
+
+- `lfpga_popcount`, `lfpga_priority_encoder`, `lfpga_onehot_mux`
+- `lfpga_edge_detect`, `lfpga_debounce` (press/release events),
+  `lfpga_pwm` (glitch-free duty), `lfpga_clkdiv_frac` (fractional-rate
+  enable via phase accumulator)
+
 ## v0.1.0 — 2026-07-04
 
 The core library. 11 new modules, all with self-checking testbenches,

@@ -53,6 +53,18 @@ lets you simulate and modify library code in your browser, no installs.
 | [`lfpga_lfsr`](rtl/math/lfpga_lfsr.v) | maximal-length LFSR, widths 2-32 & 64 | 1 LUT4 + 16 FF |
 | [`lfpga_gray`](rtl/math/lfpga_gray.v) | binary <-> Gray converters | 3 LUT4 |
 
+**Utilities**
+
+| Module | What it is | Cost* |
+|---|---|---|
+| [`lfpga_popcount`](rtl/util/lfpga_popcount.v) | count set bits (combinational tree) | 12 LUT4 |
+| [`lfpga_priority_encoder`](rtl/util/lfpga_priority_encoder.v) | lowest-set-bit: one-hot + index | 18 LUT4 |
+| [`lfpga_onehot_mux`](rtl/util/lfpga_onehot_mux.v) | AND-OR mux for one-hot selects | 24 LUT4 |
+| [`lfpga_edge_detect`](rtl/util/lfpga_edge_detect.v) | rise/fall/toggle pulses | 3 LUT4 + 1 FF |
+| [`lfpga_debounce`](rtl/util/lfpga_debounce.v) | switch debouncer with press/release events | 44 LUT4 + 25 FF |
+| [`lfpga_pwm`](rtl/util/lfpga_pwm.v) | PWM with glitch-free duty updates | 33 LUT4 + 17 FF |
+| [`lfpga_clkdiv_frac`](rtl/util/lfpga_clkdiv_frac.v) | fractional-rate clock enable (phase accumulator) | 27 LUT4 + 16 FF |
+
 **Bus**
 
 | Module | What it is | Cost* |
@@ -92,11 +104,21 @@ or grab the [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 ## Roadmap
 
 - **v0.1 — shipped.** Everything above.
-- **v0.2** — the neural micro-kit: INT8 MAC array, activations, weight
+- **v0.2 — shipped.** The utilities tier above.
+- **v0.3** — the neural micro-kit: INT8 MAC array, activations, weight
   loaders, and a complete quantized MLP inference core with a NumPy
   quantizer ([why FPGAs are shaped like neural networks](https://libfpga.com/blog/fpgas-for-ai))
-- **v0.3** — formal properties (SymbiYosys) for the protocol modules,
-  FuseSoC packaging, board demo projects
+- **v0.4** — I2C master, formal properties (SymbiYosys) for the protocol
+  modules, FuseSoC packaging, board demo projects
+
+## Related projects
+
+[Wren6991/libfpga](https://github.com/Wren6991/libfpga) — an excellent,
+independent library that shares our name and our Verilog-2005 philosophy,
+with a different focus (AHB-Lite fabric, caches, SDRAM). The two projects
+are unrelated; several of our utility modules were inspired by the
+*selection* in its catalog (implementations are our own). If you need
+AHB-Lite infrastructure, go there.
 
 Want a module? [Open an issue](https://github.com/libfpga/libfpga/issues)
 or use the [request box](https://libfpga.com/tools/) — the roadmap is
