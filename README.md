@@ -20,11 +20,44 @@ lets you simulate and modify library code in your browser, no installs.
 
 ## Modules
 
+**CDC**
+
 | Module | What it is | Cost* |
 |---|---|---|
 | [`lfpga_sync_bit`](rtl/cdc/lfpga_sync_bit.v) | N-flop synchronizer for one async level bit | 2 FF |
 | [`lfpga_sync_pulse`](rtl/cdc/lfpga_sync_pulse.v) | toggle-based pulse crossing, either direction | 2 LUT4 + 4 FF |
 | [`lfpga_reset_sync`](rtl/cdc/lfpga_reset_sync.v) | reset: async assert, sync deassert | 2 FF |
+
+**FIFOs & streams**
+
+| Module | What it is | Cost* |
+|---|---|---|
+| [`lfpga_fifo_sync`](rtl/fifo/lfpga_fifo_sync.v) | synchronous show-ahead FIFO with count | 154 LUT4 + 145 FF |
+| [`lfpga_fifo_async`](rtl/fifo/lfpga_fifo_async.v) | dual-clock FIFO, gray pointers (Cummings) | 154 LUT4 + 168 FF |
+| [`lfpga_skid_buffer`](rtl/stream/lfpga_skid_buffer.v) | valid/ready register slice, full throughput | 16 LUT4 + 18 FF |
+| [`lfpga_arbiter_rr`](rtl/stream/lfpga_arbiter_rr.v) | round-robin arbiter, one-hot grant | 18 LUT4 + 4 FF |
+
+**Serial**
+
+| Module | What it is | Cost* |
+|---|---|---|
+| [`lfpga_uart_tx`](rtl/serial/lfpga_uart_tx.v) | UART transmitter, 8N1, valid/ready | 48 LUT4 + 24 FF |
+| [`lfpga_uart_rx`](rtl/serial/lfpga_uart_rx.v) | UART receiver, mid-bit sampling, glitch reject | 63 LUT4 + 32 FF |
+| [`lfpga_spi_master`](rtl/serial/lfpga_spi_master.v) | SPI master, mode 0, full duplex | 32 LUT4 + 27 FF |
+
+**Math & integrity**
+
+| Module | What it is | Cost* |
+|---|---|---|
+| [`lfpga_crc`](rtl/math/lfpga_crc.v) | parallel CRC, any polynomial, word per clock | 17 LUT4 + 16 FF |
+| [`lfpga_lfsr`](rtl/math/lfpga_lfsr.v) | maximal-length LFSR, widths 2-32 & 64 | 1 LUT4 + 16 FF |
+| [`lfpga_gray`](rtl/math/lfpga_gray.v) | binary <-> Gray converters | 3 LUT4 |
+
+**Bus**
+
+| Module | What it is | Cost* |
+|---|---|---|
+| [`lfpga_axil_bridge`](rtl/bus/lfpga_axil_bridge.v) | AXI4-Lite slave to simple register bus | 5 LUT4 + 80 FF |
 
 *\*generic Yosys `synth -lut 4` mapping at default parameters; vendor
 results with 6-input LUTs typically come in at or below these numbers.*
@@ -58,9 +91,7 @@ or grab the [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 
 ## Roadmap
 
-- **v0.1** — CDC set (here), sync/async FIFOs, skid buffer, round-robin
-  arbiter, UART, SPI master, parallel CRC, LFSR, Gray codecs, AXI-Lite CSR
-  bridge (pairs with the [register-map generator](https://libfpga.com/tools/register-map))
+- **v0.1 — shipped.** Everything above.
 - **v0.2** — the neural micro-kit: INT8 MAC array, activations, weight
   loaders, and a complete quantized MLP inference core with a NumPy
   quantizer ([why FPGAs are shaped like neural networks](https://libfpga.com/blog/fpgas-for-ai))

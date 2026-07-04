@@ -12,7 +12,9 @@ them:
 
 Style:
 
-- Plain Verilog-2005, one module per file, file named after the module.
+- Plain Verilog-2005, one module per file (closely paired tiny
+  modules like bin2gray/gray2bin may share one), file named after
+  the module or the pair.
 - Module names prefixed `lfpga_`. Parameters SCREAMING_SNAKE, signals
   lower_snake. Active-low signals end `_n`.
 - No vendor primitives in `rtl/` — vendor-specific wrappers, if ever
