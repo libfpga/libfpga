@@ -68,6 +68,18 @@ releases and tools — every release is announced there.
 | [`lfpga_pwm`](rtl/util/lfpga_pwm.v) | PWM with glitch-free duty updates | 33 LUT4 + 17 FF |
 | [`lfpga_clkdiv_frac`](rtl/util/lfpga_clkdiv_frac.v) | fractional-rate clock enable (phase accumulator) | 27 LUT4 + 16 FF |
 
+**Fixed-point & neural (v0.3)**
+
+| Module | What it is | Cost* |
+|---|---|---|
+| [`lfpga_fix_resize`](rtl/fix/lfpga_fix_resize.v) | requantize: shift + round + saturate | 31 LUT4 |
+| [`lfpga_fix_mult`](rtl/fix/lfpga_fix_mult.v) | signed fixed-point multiply, resized | 240 LUT4 |
+| [`lfpga_fix_add`](rtl/fix/lfpga_fix_add.v) | fixed-point add/sub, saturating | 48 LUT4 |
+| [`lfpga_mac`](rtl/nn/lfpga_mac.v) | signed multiply-accumulate (the NN atom) | 326 LUT4 + 32 FF |
+| [`lfpga_relu`](rtl/nn/lfpga_relu.v) | ReLU / leaky / clipped + requantize | 129 LUT4 |
+| [`lfpga_barrel_shifter`](rtl/nn/lfpga_barrel_shifter.v) | single-cycle logical/arith shift | 139 LUT4 |
+| [`lfpga_bitreverse`](rtl/nn/lfpga_bitreverse.v) | reverse bit order | 0 LUT4 |
+
 **Bus**
 
 | Module | What it is | Cost* |
@@ -107,12 +119,29 @@ or grab the [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 ## Roadmap
 
 - **v0.1 — shipped.** Everything above.
-- **v0.2 — shipped.** The utilities tier above.
-- **v0.3** — the neural micro-kit: INT8 MAC array, activations, weight
-  loaders, and a complete quantized MLP inference core with a NumPy
-  quantizer ([why FPGAs are shaped like neural networks](https://libfpga.com/blog/fpgas-for-ai))
+- **v0.2 — shipped.** The utilities tier.
+- **v0.3 — shipped.** The fixed-point + neural tier above, plus the MLP
+  generator.
 - **v0.4** — I2C master, formal properties (SymbiYosys) for the protocol
   modules, FuseSoC packaging, board demo projects
+
+## The MLP generator
+
+`gen/mlp_gen.py` turns a JSON network spec (trained, Q4.4-quantized
+weights) into a pipelined Verilog inference core **and** a self-checking
+testbench that proves the RTL matches a bit-exact software model on every
+test vector. It's the library-grade generalization of
+[fpga-neuron](https://github.com/libfpga/fpga-neuron):
+
+```sh
+python3 gen/mlp_gen.py gen/examples/mlp_xor.json out/
+# emits out/mlp_xor.v and out/tb_mlp_xor.v; the TB self-checks vs the model
+```
+
+The layer primitives (`lfpga_mac`, `lfpga_relu`, `lfpga_fix_resize`) are
+the building blocks it composes. See
+[why FPGAs are shaped like neural networks](https://libfpga.com/blog/fpgas-for-ai)
+and [how many bits you actually need](https://libfpga.com/blog/how-many-bits).
 
 ## Related projects
 

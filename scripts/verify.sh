@@ -5,13 +5,15 @@ set -u
 cd "$(dirname "$0")/.."
 mkdir -p build
 fails=0
+YDIRS=""; for d in rtl/*/; do YDIRS="$YDIRS -y $d"; done
+ALLRTL=$(find rtl -name "*.v" | sort | tr "\n" " ")
 
 sim() {
     for tb in tb/*/tb_*.v; do
         name=$(basename "$tb" .v | sed 's/^tb_//')
         dir=$(basename "$(dirname "$tb")")
         rtl="rtl/$dir/lfpga_$name.v"
-        if ! iverilog -g2012 -Wall -Wno-timescale -o "build/$name.vvp" "$rtl" "$tb"; then
+        if ! iverilog -g2012 -Wall -Wno-timescale $YDIRS -o "build/$name.vvp" "$rtl" "$tb"; then
             echo "SIM FAIL (compile): $name"; fails=$((fails+1)); continue
         fi
         (cd build && vvp -n "$name.vvp") > "build/$name.log" 2>&1
@@ -25,7 +27,7 @@ sim() {
 
 lint() {
     for rtl in rtl/*/*.v; do
-        if verilator --lint-only -Wall -Wno-DECLFILENAME -Wno-MULTITOP "$rtl" > "build/lint.log" 2>&1; then
+        if verilator --lint-only -Wall -Wno-DECLFILENAME -Wno-MULTITOP -Wno-UNUSEDPARAM $YDIRS "$rtl" > "build/lint.log" 2>&1; then
             echo "LINT PASS: $(basename "$rtl")"
         else
             echo "LINT FAIL: $(basename "$rtl")"; cat build/lint.log; fails=$((fails+1))
@@ -36,7 +38,11 @@ lint() {
 synth() {
     for rtl in rtl/*/*.v; do
         name=$(basename "$rtl" .v)
-        if yosys -q -p "read_verilog $rtl; synth -lut 4 -flatten; tee -o build/$name.stat.json stat -json" \
+        top=$(basename "$rtl" .v)
+        # paired-module files (e.g. gray) have no module named after the
+        # file: let yosys pick the top in that case.
+        if grep -q "module $top\b" "$rtl"; then TOPARG="-top $top"; else TOPARG=""; fi
+        if yosys -q -p "read_verilog $ALLRTL; synth -lut 4 -flatten $TOPARG; tee -o build/$name.stat.json stat -json" \
              > "build/$name.synth.log" 2>&1; then
             luts=$(python3 -c "
 import json
@@ -55,11 +61,27 @@ print(f'{luts} LUT4, {ffs} FF')")
     done
 }
 
+gen() {
+    # regenerate the MLP example and verify it against its own model
+    python3 gen/mlp_gen.py gen/examples/mlp_xor.json build/genout/ > /dev/null
+    YD=""; for d in rtl/*/; do YD="$YD -y $d"; done
+    if ! verilator --lint-only -Wall -Wno-DECLFILENAME -Wno-UNUSEDPARAM $YD \
+         build/genout/mlp_xor.v > build/genlint.log 2>&1; then
+        echo "GEN LINT FAIL"; cat build/genlint.log; fails=$((fails+1)); return
+    fi
+    iverilog -g2012 -Wall -Wno-timescale $YD -o build/genout/gen.vvp \
+        build/genout/mlp_xor.v build/genout/tb_mlp_xor.v 2>/dev/null
+    (cd build/genout && vvp -n gen.vvp) > build/gen.log 2>&1
+    if grep -q "TB PASS" build/gen.log; then echo "GEN PASS: mlp_xor";
+    else echo "GEN FAIL: mlp_xor"; cat build/gen.log; fails=$((fails+1)); fi
+}
+
 case "${1:-all}" in
     sim)   sim ;;
+    gen)   gen ;;
     lint)  lint ;;
     synth) synth ;;
-    all)   lint; sim; synth ;;
+    all)   lint; sim; synth; gen ;;
     *) echo "usage: verify.sh [sim|lint|synth|all]"; exit 2 ;;
 esac
 

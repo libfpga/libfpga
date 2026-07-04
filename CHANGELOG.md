@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.0 — 2026-07-04
+
+The fixed-point + neural micro-kit. 7 new modules and a code generator:
+
+- Fixed point: `lfpga_fix_resize` (round + saturate requantize),
+  `lfpga_fix_mult`, `lfpga_fix_add`
+- Neural: `lfpga_mac` (multiply-accumulate), `lfpga_relu` (ReLU/leaky)
+- DSP utilities: `lfpga_barrel_shifter`, `lfpga_bitreverse`
+- **`gen/mlp_gen.py`**: JSON spec -> pipelined MLP core + self-checking
+  testbench (bit-exact vs a software model). CI regenerates and verifies
+  the XOR example on every push.
+
 ## v0.2.0 — 2026-07-04
 
 The utilities tier — 7 new modules (catalog inspired by the excellent,
