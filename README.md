@@ -18,6 +18,9 @@ Companion site: **[libfpga.com](https://libfpga.com)** — every module gets a
 doc page, and the free [Verilog playground](https://libfpga.com/learn/playground)
 lets you simulate and modify library code in your browser, no installs.
 
+Follow **[@libfpga](https://x.com/libfpga)** to keep up with new modules,
+releases and tools — every release is announced there.
+
 ## Modules
 
 **CDC**
