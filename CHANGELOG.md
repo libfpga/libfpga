@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.0 — 2026-07-04
+
+- `lfpga_i2c_master`: single-master 7-bit I2C controller. Byte-level
+  START / WRITE / READ / STOP commands, open-drain pin controls, ACK/NACK
+  reporting. Verified against a behavioral slave (register write + read
+  back) and a bit-level read check. 29 modules total.
+
 ## v0.3.0 — 2026-07-04
 
 The fixed-point + neural micro-kit. 7 new modules and a code generator:

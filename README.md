@@ -47,6 +47,7 @@ releases and tools — every release is announced there.
 | [`lfpga_uart_tx`](rtl/serial/lfpga_uart_tx.v) | UART transmitter, 8N1, valid/ready | 48 LUT4 + 24 FF |
 | [`lfpga_uart_rx`](rtl/serial/lfpga_uart_rx.v) | UART receiver, mid-bit sampling, glitch reject | 63 LUT4 + 32 FF |
 | [`lfpga_spi_master`](rtl/serial/lfpga_spi_master.v) | SPI master, mode 0, full duplex | 32 LUT4 + 27 FF |
+| [`lfpga_i2c_master`](rtl/serial/lfpga_i2c_master.v) | I2C master, 7-bit, open-drain, byte commands | 123 LUT4 + 38 FF |
 
 **Math & integrity**
 
@@ -122,8 +123,9 @@ or grab the [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 - **v0.2 — shipped.** The utilities tier.
 - **v0.3 — shipped.** The fixed-point + neural tier above, plus the MLP
   generator.
-- **v0.4** — I2C master, formal properties (SymbiYosys) for the protocol
-  modules, FuseSoC packaging, board demo projects
+- **v0.4 — shipped.** I2C master (above).
+- **v0.5** — formal properties (SymbiYosys) for the protocol modules,
+  FuseSoC packaging, board demo projects
 
 ## The MLP generator
 
