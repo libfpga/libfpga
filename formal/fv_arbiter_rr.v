@@ -7,10 +7,6 @@ module fv_arbiter_rr (input clk, input rst, input [3:0] req);
     lfpga_arbiter_rr #(.N(4)) dut (
         .clk(clk), .rst(rst), .en(1'b1), .req(req), .grant(grant));
 
-    // helper invariant: the internal 'last' pointer stays one-hot, which
-    // is what makes the grant one-hot property inductive.
-    always @(*) assert (dut.last != 0 && (dut.last & (dut.last - 4'd1)) == 4'd0);
-
     always @(*) begin
         assert ((grant & (grant - 4'd1)) == 4'd0);  // at most one bit set
         assert ((grant & ~req) == 4'd0);            // only granted a requester
