@@ -1,0 +1,19 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source FPGA toolchain
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq iverilog verilator yosys
+      - name: Lint (Verilator -Wall)
+        run: make lint
+      - name: Simulate (self-checking testbenches, Icarus)
+        run: make test
+      - name: Synthesis smoke + resource stats (Yosys)
+        run: make synth
