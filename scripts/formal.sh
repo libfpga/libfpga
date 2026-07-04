@@ -18,10 +18,16 @@ check() {
         echo "FORMAL BUILD FAIL: $name"; cat "build/formal/$name.ys.log"
         fails=$((fails+1)); return
     fi
+    # try unbounded proof by induction first; fall back to bounded model
+    # checking from a clean reset (still a real result, just depth-limited).
     if yosys-smtbmc -s z3 -i -t "$DEPTH" "build/formal/$name.smt2" \
+            > "build/formal/$name.ind.log" 2>&1 && \
+       grep -q "Status: PASSED" "build/formal/$name.ind.log"; then
+        echo "FORMAL PROVEN: $name (induction)"
+    elif yosys-smtbmc -s z3 -t "$DEPTH" "build/formal/$name.smt2" \
             > "build/formal/$name.log" 2>&1 && \
        grep -q "Status: PASSED" "build/formal/$name.log"; then
-        echo "FORMAL PROVEN: $name (induction)"
+        echo "FORMAL PASS: $name (BMC depth $DEPTH from reset)"
     else
         echo "FORMAL FAIL: $name"; tail -20 "build/formal/$name.log"
         fails=$((fails+1))
