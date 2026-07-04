@@ -1,5 +1,7 @@
 # libfpga
 
+[![CI](https://github.com/libfpga/libfpga/actions/workflows/ci.yml/badge.svg)](https://github.com/libfpga/libfpga/actions/workflows/ci.yml)
+
 **The FPGA standard library: verified, vendor-neutral building blocks.**
 
 Every module here is small, documented, and held to one quality bar,
