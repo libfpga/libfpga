@@ -1,28 +1,40 @@
-# LibFPGA registry manifest for the libfpga library
-# https://libfpga.com/cores/libfpga
 libfpga_claim: lfpga-verify-73b79f11c00ef84606e99d8a1eff1bd9
-
 name: libfpga
 tagline: Verified reusable Verilog building blocks for FPGA designs.
 category: library
 license: MIT
-languages: [verilog]
-interfaces: [axi4-lite, uart, spi, i2c]
-targets: [device-agnostic]
+languages:
+- verilog
+interfaces:
+- axi4-lite
+- uart
+- spi
+- i2c
+targets:
+- device-agnostic
 maturity: stable
-tags: [cdc, fifo, uart, spi, i2c, crc, lfsr, axi, arbiter, fixed-point, neural]
-
-# a clean, dependency-free module the registry toolchain can lint + synth
-# as a representative earned-badge check (the library has 29 such modules)
+tags:
+- cdc
+- fifo
+- uart
+- spi
+- i2c
+- crc
+- lfsr
+- axi
+- arbiter
+- fixed-point
+- neural
 top: rtl/math/lfpga_crc.v
 top_module: lfpga_crc
-files: [rtl/util/lfpga_popcount.v]
+files:
+- rtl/math/lfpga_crc.v
+description: 'A growing library of small, sharp, independently verified Verilog modules:
+  CDC primitives, sync and async FIFOs, a skid buffer, round-robin arbiter, UART/SPI/I2C,
+  CRC and LFSR, a fixed-point and neural micro-kit (MAC, ReLU, an MLP generator),
+  and an AXI4-Lite bridge. Every module ships with a self-checking testbench, is Verilator
+  -Wall clean, carries honest Yosys resource numbers, and the safety-critical blocks
+  are formally proven by induction. 29 modules, all green in CI.
 
-description: >
-  A growing library of small, sharp, independently verified Verilog
-  modules: CDC primitives, sync and async FIFOs, a skid buffer,
-  round-robin arbiter, UART/SPI/I2C, CRC and LFSR, a fixed-point and
-  neural micro-kit (MAC, ReLU, an MLP generator), and an AXI4-Lite bridge.
-  Every module ships with a self-checking testbench, is Verilator -Wall
-  clean, carries honest Yosys resource numbers, and the safety-critical
-  blocks are formally proven by induction. 29 modules, all green in CI.
+  '
+testbench: tb/math/tb_crc.v
