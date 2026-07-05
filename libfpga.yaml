@@ -14,8 +14,8 @@ tags: [cdc, fifo, uart, spi, i2c, crc, lfsr, axi, arbiter, fixed-point, neural]
 
 # a clean, dependency-free module the registry toolchain can lint + synth
 # as a representative earned-badge check (the library has 29 such modules)
-top: rtl/util/lfpga_popcount.v
-top_module: lfpga_popcount
+top: rtl/math/lfpga_crc.v
+top_module: lfpga_crc
 files: [rtl/util/lfpga_popcount.v]
 
 description: >
